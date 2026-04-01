@@ -5,52 +5,44 @@
 <title>Controle de Medicamentos</title>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f4f6f8;
-        padding: 20px;
-    }
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    padding: 20px;
+}
 
-    h1 {
-        text-align: center;
-    }
+h1 {
+    text-align: center;
+}
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-        border-radius: 10px;
-        overflow: hidden;
-    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
 
-    th, td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
 
-    th {
-        background: #2c7be5;
-        color: white;
-    }
+th {
+    background: #2c7be5;
+    color: white;
+}
 
-    tr.low {
-        background-color: #fff3cd;
-    }
+.low {
+    background: #fff3cd;
+}
 
-    tr.out {
-        background-color: #f8d7da;
-    }
+.out {
+    background: #f8d7da;
+}
 
-    input {
-        width: 70px;
-        padding: 5px;
-        text-align: center;
-    }
-
-    .status {
-        font-weight: bold;
-    }
+input {
+    width: 60px;
+    text-align: center;
+}
 </style>
 </head>
 
@@ -59,123 +51,89 @@
 <h1>💊 Controle de Medicamentos</h1>
 
 <table>
-    <thead>
-        <tr>
-            <th>Medicamento</th>
-            <th>Dosagem</th>
-            <th>Quantidade</th>
-            <th>Indicação</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody id="medTable">
+<thead>
+<tr>
+<th>Medicamento</th>
+<th>Dosagem</th>
+<th>Quantidade</th>
+<th>Indicação</th>
+<th>Status</th>
+</tr>
+</thead>
 
-        <tr>
-            <td>Donepezila</td>
-            <td>10 mg</td>
-            <td><input type="number" value="1" onchange="updateStatus(this)"></td>
-            <td>Alzheimer</td>
-            <td class="status"></td>
-        </tr>
-
-        <tr>
-            <td>Risperidona</td>
-            <td>1 mg</td>
-            <td><input type="number" value="0" onchange="updateStatus(this)"></td>
-            <td>Antipsicótico</td>
-            <td class="status"></td>
-        </tr>
-
-        <tr>
-            <td>Venlafaxina</td>
-            <td>150 mg</td>
-            <td><input type="number" value="0" onchange="updateStatus(this)"></td>
-            <td>Antidepressivo</td>
-            <td class="status"></td>
-        </tr>
-
-        <tr>
-            <td>Clonazepam</td>
-            <td>2 mg</td>
-            <td><input type="number" value="16" onchange="updateStatus(this)"></td>
-            <td>Ansiedade / Insônia</td>
-            <td class="status"></td>
-        </tr>
-
-        <tr>
-            <td>Losartana</td>
-            <td>50 mg</td>
-            <td><input type="number" value="121" onchange="updateStatus(this)"></td>
-            <td>Hipertensão</td>
-            <td class="status"></td>
-        </tr>
-
-        <tr>
-            <td>Anlodipino</td>
-            <td>5 mg</td>
-            <td><input type="number" value="92" onchange="updateStatus(this)"></td>
-            <td>Hipertensão</td>
-            <td class="status"></td>
-        </tr>
-
-        <tr>
-            <td>Amitriptilina</td>
-            <td>25 mg</td>
-            <td><input type="number" value="60" onchange="updateStatus(this)"></td>
-            <td>Depressão / Dor / Sono</td>
-            <td class="status"></td>
-        </tr>
-
-        <tr>
-            <td>Glifage XR</td>
-            <td>500 mg</td>
-            <td><input type="number" value="0" onchange="updateStatus(this)"></td>
-            <td>Diabetes tipo 2</td>
-            <td class="status"></td>
-        </tr>
-
-        <tr>
-            <td>Rosuvastatina</td>
-            <td>20 mg</td>
-            <td><input type="number" value="0" onchange="updateStatus(this)"></td>
-            <td>Colesterol</td>
-            <td class="status"></td>
-        </tr>
-
-        <tr>
-            <td>Alendronato</td>
-            <td>70 mg</td>
-            <td><input type="number" value="0" onchange="updateStatus(this)"></td>
-            <td>Osteoporose</td>
-            <td class="status"></td>
-        </tr>
-
-    </tbody>
+<tbody id="tableBody"></tbody>
 </table>
 
 <script>
-function updateStatus(input) {
-    const row = input.parentElement.parentElement;
-    const statusCell = row.querySelector(".status");
-    const value = parseInt(input.value);
+const meds = [
+    ["Donepezila", "10 mg", "Alzheimer"],
+    ["Risperidona", "1 mg", "Antipsicótico"],
+    ["Venlafaxina", "150 mg", "Antidepressivo"],
+    ["Clonazepam", "2 mg", "Ansiedade"],
+    ["Losartana", "50 mg", "Hipertensão"],
+    ["Anlodipino", "5 mg", "Hipertensão"],
+    ["Amitriptilina", "25 mg", "Sono / Dor"],
+    ["Glifage XR", "500 mg", "Diabetes"],
+    ["Rosuvastatina", "20 mg", "Colesterol"],
+    ["Alendronato", "70 mg", "Osteoporose"]
+];
 
-    row.classList.remove("low", "out");
+const table = document.getElementById("tableBody");
 
-    if (value === 0) {
-        statusCell.textContent = "⚠️ Zerado";
-        row.classList.add("out");
-    } else if (value <= 5) {
-        statusCell.textContent = "⚠️ Baixo";
-        row.classList.add("low");
-    } else {
-        statusCell.textContent = "✅ OK";
-    }
+// carregar dados salvos
+const saved = JSON.parse(localStorage.getItem("meds")) || {};
+
+// montar tabela
+meds.forEach((med, i) => {
+    const tr = document.createElement("tr");
+
+    const qtd = saved[i] ?? 0;
+
+    tr.innerHTML = `
+        <td>${med[0]}</td>
+        <td>${med[1]}</td>
+        <td><input type="number" value="${qtd}" data-id="${i}"></td>
+        <td>${med[2]}</td>
+        <td class="status"></td>
+    `;
+
+    table.appendChild(tr);
+});
+
+// atualizar status
+function update() {
+    const inputs = document.querySelectorAll("input");
+    let data = {};
+
+    inputs.forEach(input => {
+        const val = parseInt(input.value) || 0;
+        const id = input.dataset.id;
+        const row = input.parentElement.parentElement;
+        const status = row.querySelector(".status");
+
+        row.classList.remove("low", "out");
+
+        if (val === 0) {
+            status.textContent = "⚠️ Zerado";
+            row.classList.add("out");
+        } else if (val <= 5) {
+            status.textContent = "⚠️ Baixo";
+            row.classList.add("low");
+        } else {
+            status.textContent = "✅ OK";
+        }
+
+        data[id] = val;
+    });
+
+    localStorage.setItem("meds", JSON.stringify(data));
 }
 
-// Inicializar status ao carregar
-document.querySelectorAll("input").forEach(input => {
-    updateStatus(input);
-});
+// eventos
+document.addEventListener("input", update);
+
+// rodar ao iniciar
+update();
 </script>
 
 </body>
