@@ -6,7 +6,7 @@
 
 <style>
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     background: #f4f6f8;
     padding: 20px;
 }
@@ -17,8 +17,8 @@ h1 {
 
 table {
     width: 100%;
-    border-collapse: collapse;
     background: white;
+    border-collapse: collapse;
 }
 
 th, td {
@@ -31,18 +31,18 @@ th {
     color: white;
 }
 
-.low {
-    background: #fff3cd;
-}
-
-.out {
-    background: #f8d7da;
-}
+.low { background: #fff3cd; }
+.out { background: #f8d7da; }
 
 input {
-    width: 60px;
+    padding: 5px;
     text-align: center;
 }
+
+.date {
+    width: 140px;
+}
+
 </style>
 </head>
 
@@ -57,6 +57,8 @@ input {
 <th>Dosagem</th>
 <th>Quantidade</th>
 <th>Indicação</th>
+<th>Última Receita</th>
+<th>Renovar</th>
 <th>Status</th>
 </tr>
 </thead>
@@ -74,65 +76,98 @@ const meds = [
     ["Anlodipino", "5 mg", "Hipertensão"],
     ["Amitriptilina", "25 mg", "Sono / Dor"],
     ["Glifage XR", "500 mg", "Diabetes"],
-    ["Rosuvastatina", "20 mg", "Colesterol"],
     ["Alendronato", "70 mg", "Osteoporose"]
 ];
 
 const table = document.getElementById("tableBody");
-
-// carregar dados salvos
 const saved = JSON.parse(localStorage.getItem("meds")) || {};
 
-// montar tabela
 meds.forEach((med, i) => {
     const tr = document.createElement("tr");
 
-    const qtd = saved[i] ?? 0;
+    const data = saved[i] || { qtd: 0, receita: "" };
 
     tr.innerHTML = `
         <td>${med[0]}</td>
         <td>${med[1]}</td>
-        <td><input type="number" value="${qtd}" data-id="${i}"></td>
+        <td><input type="number" value="${data.qtd}" data-id="${i}" class="qtd"></td>
         <td>${med[2]}</td>
+        <td><input type="date" value="${data.receita}" data-id="${i}" class="receita date"></td>
+        <td class="renovar"></td>
         <td class="status"></td>
     `;
 
     table.appendChild(tr);
 });
 
-// atualizar status
+function calcularRenovacao(dataStr) {
+    if (!dataStr) return "-";
+
+    const data = new Date(dataStr);
+    data.setDate(data.getDate() + 30);
+
+    return data.toLocaleDateString("pt-BR");
+}
+
+function diasRestantes(dataStr) {
+    if (!dataStr) return null;
+
+    const hoje = new Date();
+    const data = new Date(dataStr);
+    data.setDate(data.getDate() + 30);
+
+    const diff = Math.ceil((data - hoje) / (1000 * 60 * 60 * 24));
+    return diff;
+}
+
 function update() {
-    const inputs = document.querySelectorAll("input");
+    const rows = document.querySelectorAll("#tableBody tr");
     let data = {};
 
-    inputs.forEach(input => {
-        const val = parseInt(input.value) || 0;
-        const id = input.dataset.id;
-        const row = input.parentElement.parentElement;
+    rows.forEach((row, i) => {
+        const qtdInput = row.querySelector(".qtd");
+        const receitaInput = row.querySelector(".receita");
         const status = row.querySelector(".status");
+        const renovar = row.querySelector(".renovar");
+
+        const qtd = parseInt(qtdInput.value) || 0;
+        const receita = receitaInput.value;
 
         row.classList.remove("low", "out");
 
-        if (val === 0) {
+        // STATUS ESTOQUE
+        if (qtd === 0) {
             status.textContent = "⚠️ Zerado";
             row.classList.add("out");
-        } else if (val <= 5) {
+        } else if (qtd <= 5) {
             status.textContent = "⚠️ Baixo";
             row.classList.add("low");
         } else {
             status.textContent = "✅ OK";
         }
 
-        data[id] = val;
+        // RENOVAÇÃO
+        const dias = diasRestantes(receita);
+
+        if (dias === null) {
+            renovar.textContent = "-";
+        } else if (dias <= 0) {
+            renovar.textContent = "🚨 Vencida";
+            row.classList.add("out");
+        } else if (dias <= 5) {
+            renovar.textContent = `⚠️ ${dias} dias`;
+            row.classList.add("low");
+        } else {
+            renovar.textContent = calcularRenovacao(receita);
+        }
+
+        data[i] = { qtd, receita };
     });
 
     localStorage.setItem("meds", JSON.stringify(data));
 }
 
-// eventos
 document.addEventListener("input", update);
-
-// rodar ao iniciar
 update();
 </script>
 
