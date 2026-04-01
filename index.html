@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Controle de Medicamentos</title>
+<title>Controle de medicamentos - Sra. Ana Demetrio</title>
 
 <style>
 body {
@@ -42,20 +42,19 @@ input {
 .date {
     width: 140px;
 }
-
 </style>
 </head>
 
 <body>
 
-<h1>💊 Controle de Medicamentos</h1>
+<h1>💊 Controle de medicamentos - Sra. Ana Demetrio</h1>
 
 <table>
 <thead>
 <tr>
 <th>Medicamento</th>
 <th>Dosagem</th>
-<th>Quantidade</th>
+<th>Quantidade de comprimidos</th>
 <th>Indicação</th>
 <th>Última Receita</th>
 <th>Renovar</th>
@@ -102,22 +101,17 @@ meds.forEach((med, i) => {
 
 function calcularRenovacao(dataStr) {
     if (!dataStr) return "-";
-
     const data = new Date(dataStr);
     data.setDate(data.getDate() + 30);
-
     return data.toLocaleDateString("pt-BR");
 }
 
 function diasRestantes(dataStr) {
     if (!dataStr) return null;
-
     const hoje = new Date();
     const data = new Date(dataStr);
     data.setDate(data.getDate() + 30);
-
-    const diff = Math.ceil((data - hoje) / (1000 * 60 * 60 * 24));
-    return diff;
+    return Math.ceil((data - hoje) / (1000 * 60 * 60 * 24));
 }
 
 function update() {
@@ -135,7 +129,7 @@ function update() {
 
         row.classList.remove("low", "out");
 
-        // STATUS ESTOQUE
+        // Status estoque
         if (qtd === 0) {
             status.textContent = "⚠️ Zerado";
             row.classList.add("out");
@@ -146,7 +140,7 @@ function update() {
             status.textContent = "✅ OK";
         }
 
-        // RENOVAÇÃO
+        // Renovação receita
         const dias = diasRestantes(receita);
 
         if (dias === null) {
