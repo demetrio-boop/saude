@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Controle de Medicamentos</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background: #2c7be5;
+        color: white;
+    }
+
+    tr.low {
+        background-color: #fff3cd;
+    }
+
+    tr.out {
+        background-color: #f8d7da;
+    }
+
+    input {
+        width: 70px;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .status {
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>💊 Controle de Medicamentos</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Medicamento</th>
+            <th>Dosagem</th>
+            <th>Quantidade</th>
+            <th>Indicação</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="medTable">
+
+        <tr>
+            <td>Donepezila</td>
+            <td>10 mg</td>
+            <td><input type="number" value="1" onchange="updateStatus(this)"></td>
+            <td>Alzheimer</td>
+            <td class="status"></td>
+        </tr>
+
+        <tr>
+            <td>Risperidona</td>
+            <td>1 mg</td>
+            <td><input type="number" value="0" onchange="updateStatus(this)"></td>
+            <td>Antipsicótico</td>
+            <td class="status"></td>
+        </tr>
+
+        <tr>
+            <td>Venlafaxina</td>
+            <td>150 mg</td>
+            <td><input type="number" value="0" onchange="updateStatus(this)"></td>
+            <td>Antidepressivo</td>
+            <td class="status"></td>
+        </tr>
+
+        <tr>
+            <td>Clonazepam</td>
+            <td>2 mg</td>
+            <td><input type="number" value="16" onchange="updateStatus(this)"></td>
+            <td>Ansiedade / Insônia</td>
+            <td class="status"></td>
+        </tr>
+
+        <tr>
+            <td>Losartana</td>
+            <td>50 mg</td>
+            <td><input type="number" value="121" onchange="updateStatus(this)"></td>
+            <td>Hipertensão</td>
+            <td class="status"></td>
+        </tr>
+
+        <tr>
+            <td>Anlodipino</td>
+            <td>5 mg</td>
+            <td><input type="number" value="92" onchange="updateStatus(this)"></td>
+            <td>Hipertensão</td>
+            <td class="status"></td>
+        </tr>
+
+        <tr>
+            <td>Amitriptilina</td>
+            <td>25 mg</td>
+            <td><input type="number" value="60" onchange="updateStatus(this)"></td>
+            <td>Depressão / Dor / Sono</td>
+            <td class="status"></td>
+        </tr>
+
+        <tr>
+            <td>Glifage XR</td>
+            <td>500 mg</td>
+            <td><input type="number" value="0" onchange="updateStatus(this)"></td>
+            <td>Diabetes tipo 2</td>
+            <td class="status"></td>
+        </tr>
+
+        <tr>
+            <td>Rosuvastatina</td>
+            <td>20 mg</td>
+            <td><input type="number" value="0" onchange="updateStatus(this)"></td>
+            <td>Colesterol</td>
+            <td class="status"></td>
+        </tr>
+
+        <tr>
+            <td>Alendronato</td>
+            <td>70 mg</td>
+            <td><input type="number" value="0" onchange="updateStatus(this)"></td>
+            <td>Osteoporose</td>
+            <td class="status"></td>
+        </tr>
+
+    </tbody>
+</table>
+
+<script>
+function updateStatus(input) {
+    const row = input.parentElement.parentElement;
+    const statusCell = row.querySelector(".status");
+    const value = parseInt(input.value);
+
+    row.classList.remove("low", "out");
+
+    if (value === 0) {
+        statusCell.textContent = "⚠️ Zerado";
+        row.classList.add("out");
+    } else if (value <= 5) {
+        statusCell.textContent = "⚠️ Baixo";
+        row.classList.add("low");
+    } else {
+        statusCell.textContent = "✅ OK";
+    }
+}
+
+// Inicializar status ao carregar
+document.querySelectorAll("input").forEach(input => {
+    updateStatus(input);
+});
+</script>
+
+</body>
+</html>
