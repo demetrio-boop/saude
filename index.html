@@ -3,169 +3,265 @@
 <head>
 <meta charset="UTF-8">
 <title>Controle de medicamentos - Sra. Ana Demetrio</title>
-
 <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    font-family: Arial;
-    background: #f4f6f8;
-    padding: 20px;
+  font-family: 'DM Sans', sans-serif;
+  background: #eef1f6;
+  padding: 28px 20px;
+  color: #1a1d23;
+  min-height: 100vh;
 }
 
 h1 {
-    text-align: center;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1a1d23;
+  letter-spacing: -0.02em;
 }
+
+.subtitle {
+  text-align: center;
+  font-size: .78rem;
+  color: #6b7280;
+  margin-bottom: 22px;
+}
+
+.wrap { overflow-x: auto; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.09); }
 
 table {
-    width: 100%;
-    background: white;
-    border-collapse: collapse;
+  width: 100%;
+  background: white;
+  border-collapse: collapse;
+  border-radius: 14px;
+  overflow: hidden;
+  min-width: 680px;
 }
 
-th, td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
+thead tr { background: #1e3a5f; }
 th {
-    background: #2c7be5;
-    color: white;
+  padding: 11px 14px;
+  text-align: left;
+  font-size: .78rem;
+  font-weight: 500;
+  color: #c8d8f0;
+  letter-spacing: .05em;
+  text-transform: uppercase;
 }
 
-.low { background: #fff3cd; }
-.out { background: #f8d7da; }
-
-input {
-    padding: 5px;
-    text-align: center;
+td {
+  padding: 9px 14px;
+  font-size: .84rem;
+  border-bottom: 1px solid #f0f2f6;
+  vertical-align: middle;
 }
 
-.date {
-    width: 140px;
+tbody tr:last-child td { border-bottom: none; }
+
+tbody tr { transition: background .15s; }
+tbody tr:hover { background: #f8fafc; }
+
+.med-name { font-weight: 500; color: #1e3a5f; }
+.dose { font-family: 'DM Mono', monospace; font-size: .78rem; color: #4b5563; }
+.freq-badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-family: 'DM Mono', monospace;
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-weight: 500;
+  white-space: nowrap;
 }
+.freq-daily  { background: #dbeafe; color: #1d4ed8; }
+.freq-weekly { background: #ede9fe; color: #6d28d9; }
+
+input[type=number] {
+  font-family: 'DM Mono', monospace;
+  font-size: .82rem;
+  border: 1px solid #dde1e9;
+  border-radius: 7px;
+  padding: 5px 8px;
+  background: #fafbfc;
+  color: #1a1d23;
+  outline: none;
+  width: 72px;
+  text-align: center;
+  transition: border-color .15s, background .15s;
+}
+input[type=date] {
+  font-family: 'DM Mono', monospace;
+  font-size: .8rem;
+  border: 1px solid #dde1e9;
+  border-radius: 7px;
+  padding: 5px 8px;
+  background: #fafbfc;
+  color: #1a1d23;
+  outline: none;
+  width: 148px;
+  transition: border-color .15s, background .15s;
+}
+input:focus { border-color: #2c7be5; background: white; }
+
+.status, .renovar {
+  font-size: .8rem;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+tr.low { background: #fffbeb !important; }
+tr.out { background: #fff5f5 !important; }
+
+.legend {
+  margin-top: 16px;
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: .75rem;
+  color: #6b7280;
+}
+.legend span { display: flex; align-items: center; gap: 5px; }
+.dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.dot-ok   { background: #d1fae5; border: 1px solid #6ee7b7; }
+.dot-low  { background: #fef3c7; border: 1px solid #fcd34d; }
+.dot-out  { background: #fee2e2; border: 1px solid #fca5a5; }
 </style>
 </head>
-
 <body>
 
-<h1>💊 Controle de medicamentos - Sra. Ana Demetrio</h1>
+<h1>💊 Controle de medicamentos — Sra. Ana Demetrio</h1>
+<p class="subtitle">Medicamentos diários: estoque baixo ≤ 5 comprimidos &nbsp;|&nbsp; Alendronato (semanal): estoque baixo ≤ 2 comprimidos</p>
 
+<div class="wrap">
 <table>
 <thead>
 <tr>
-<th>Medicamento</th>
-<th>Dosagem</th>
-<th>Quantidade de comprimidos</th>
-<th>Indicação</th>
-<th>Última Receita</th>
-<th>Renovar</th>
-<th>Status</th>
+  <th>Medicamento</th>
+  <th>Dosagem</th>
+  <th>Frequência</th>
+  <th>Qtd.</th>
+  <th>Indicação</th>
+  <th>Última Receita</th>
+  <th>Renovar em</th>
+  <th>Status</th>
 </tr>
 </thead>
-
 <tbody id="tableBody"></tbody>
 </table>
+</div>
+
+<div class="legend">
+  <span><span class="dot dot-ok"></span> OK</span>
+  <span><span class="dot dot-low"></span> Estoque baixo</span>
+  <span><span class="dot dot-out"></span> Zerado / Receita vencida</span>
+</div>
 
 <script>
+// [nome, dosagem, indicação, semanal?]
 const meds = [
-    ["Donepezila", "10 mg", "Alzheimer"],
-    ["Memantina", "10 mg", "Alzheimer"]
-    ["Risperidona", "1 mg", "Antipsicótico"],
-    ["Venlafaxina", "150 mg", "Antidepressivo"],
-    ["Clonazepam", "2 mg", "Ansiedade"],
-    ["Losartana", "50 mg", "Hipertensão"],
-    ["Anlodipino", "5 mg", "Hipertensão"],
-    ["Amitriptilina", "25 mg", "Sono / Dor"],
-    ["Cloridrato de Metformina", "500 mg", "Diabetes"],
-    ["Alendronato", "70 mg", "Osteoporose"]
-    ["Rosuvastatina", "20 mg", "Colesterol"]
+  ["Donepezila",                "10 mg",  "Alzheimer",      false],
+  ["Memantina",                 "10 mg",  "Alzheimer",      false],
+  ["Risperidona",               "1 mg",   "Antipsicótico",  false],
+  ["Venlafaxina",               "150 mg", "Antidepressivo", false],
+  ["Clonazepam",                "2 mg",   "Ansiedade",      false],
+  ["Losartana",                 "50 mg",  "Hipertensão",    false],
+  ["Anlodipino",                "5 mg",   "Hipertensão",    false],
+  ["Amitriptilina",             "25 mg",  "Sono / Dor",     false],
+  ["Cloridrato de Metformina",  "500 mg", "Diabetes",       false],
+  ["Alendronato",               "70 mg",  "Osteoporose",    true ],
 ];
 
+const STORAGE_KEY = "medsAnaDemetrio_v2";
 const table = document.getElementById("tableBody");
-const saved = JSON.parse(localStorage.getItem("meds")) || {};
+const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 
 meds.forEach((med, i) => {
-    const tr = document.createElement("tr");
-
-    const data = saved[i] || { qtd: 0, receita: "" };
-
-    tr.innerHTML = `
-        <td>${med[0]}</td>
-        <td>${med[1]}</td>
-        <td><input type="number" value="${data.qtd}" data-id="${i}" class="qtd"></td>
-        <td>${med[2]}</td>
-        <td><input type="date" value="${data.receita}" data-id="${i}" class="receita date"></td>
-        <td class="renovar"></td>
-        <td class="status"></td>
-    `;
-
-    table.appendChild(tr);
+  const tr = document.createElement("tr");
+  const d = saved[i] || { qtd: 0, receita: "" };
+  const freqLabel = med[3]
+    ? '<span class="freq-badge freq-weekly">Semanal</span>'
+    : '<span class="freq-badge freq-daily">Diário</span>';
+  tr.innerHTML = `
+    <td class="med-name">${med[0]}</td>
+    <td class="dose">${med[1]}</td>
+    <td>${freqLabel}</td>
+    <td><input type="number" min="0" value="${d.qtd}" data-id="${i}" class="qtd"></td>
+    <td>${med[2]}</td>
+    <td><input type="date" value="${d.receita}" data-id="${i}" class="receita"></td>
+    <td class="renovar"></td>
+    <td class="status"></td>
+  `;
+  table.appendChild(tr);
 });
 
-function calcularRenovacao(dataStr) {
-    if (!dataStr) return "-";
-    const data = new Date(dataStr);
-    data.setDate(data.getDate() + 30);
-    return data.toLocaleDateString("pt-BR");
+function calcRenovacao(dateStr) {
+  if (!dateStr) return "-";
+  const dt = new Date(dateStr);
+  dt.setDate(dt.getDate() + 30);
+  return dt.toLocaleDateString("pt-BR");
 }
 
-function diasRestantes(dataStr) {
-    if (!dataStr) return null;
-    const hoje = new Date();
-    const data = new Date(dataStr);
-    data.setDate(data.getDate() + 30);
-    return Math.ceil((data - hoje) / (1000 * 60 * 60 * 24));
+function diasRestantes(dateStr) {
+  if (!dateStr) return null;
+  const hoje = new Date();
+  const dt = new Date(dateStr);
+  dt.setDate(dt.getDate() + 30);
+  return Math.ceil((dt - hoje) / (1000 * 60 * 60 * 24));
 }
 
 function update() {
-    const rows = document.querySelectorAll("#tableBody tr");
-    let data = {};
+  const rows = document.querySelectorAll("#tableBody tr");
+  let data = {};
 
-    rows.forEach((row, i) => {
-        const qtdInput = row.querySelector(".qtd");
-        const receitaInput = row.querySelector(".receita");
-        const status = row.querySelector(".status");
-        const renovar = row.querySelector(".renovar");
+  rows.forEach((row, i) => {
+    const semanal = meds[i][3];
+    const qtd = parseInt(row.querySelector(".qtd").value) || 0;
+    const receita = row.querySelector(".receita").value;
+    const status = row.querySelector(".status");
+    const renovar = row.querySelector(".renovar");
 
-        const qtd = parseInt(qtdInput.value) || 0;
-        const receita = receitaInput.value;
+    row.classList.remove("low", "out");
 
-        row.classList.remove("low", "out");
+    // Limiar de estoque baixo: semanal = 2, diário = 5
+    const limiarBaixo = semanal ? 2 : 5;
 
-        // Status estoque
-        if (qtd === 0) {
-            status.textContent = "⚠️ Zerado";
-            row.classList.add("out");
-        } else if (qtd <= 5) {
-            status.textContent = "⚠️ Baixo";
-            row.classList.add("low");
-        } else {
-            status.textContent = "✅ OK";
-        }
+    if (qtd === 0) {
+      status.textContent = "⚠️ Zerado";
+      row.classList.add("out");
+    } else if (qtd <= limiarBaixo) {
+      status.textContent = "⚠️ Baixo";
+      row.classList.add("low");
+    } else {
+      status.textContent = "✅ OK";
+    }
 
-        // Renovação receita
-        const dias = diasRestantes(receita);
+    // Renovação de receita
+    const dias = diasRestantes(receita);
+    if (dias === null) {
+      renovar.textContent = "-";
+    } else if (dias <= 0) {
+      renovar.textContent = "🚨 Vencida";
+      row.classList.add("out");
+    } else if (dias <= 5) {
+      renovar.textContent = `⚠️ ${dias} dia${dias !== 1 ? "s" : ""}`;
+      row.classList.add("low");
+    } else {
+      renovar.textContent = calcRenovacao(receita);
+    }
 
-        if (dias === null) {
-            renovar.textContent = "-";
-        } else if (dias <= 0) {
-            renovar.textContent = "🚨 Vencida";
-            row.classList.add("out");
-        } else if (dias <= 5) {
-            renovar.textContent = `⚠️ ${dias} dias`;
-            row.classList.add("low");
-        } else {
-            renovar.textContent = calcularRenovacao(receita);
-        }
+    data[i] = { qtd, receita };
+  });
 
-        data[i] = { qtd, receita };
-    });
-
-    localStorage.setItem("meds", JSON.stringify(data));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
 document.addEventListener("input", update);
 update();
 </script>
-
 </body>
 </html>
